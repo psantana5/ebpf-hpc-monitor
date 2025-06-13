@@ -1,0 +1,228 @@
+# eBPF HPC Monitor Configuration
+# This file contains configuration options for the monitoring system
+
+# eBPF probe configuration
+ebpf:
+  # Filter type: 'all', 'syscall', 'sched', 'io', 'net'
+  filter: 'all'
+  
+  # Polling interval for events (milliseconds)
+  poll_interval_ms: 100
+  
+  # Buffer size for perf events
+  perf_buffer_size: 64
+  
+  # Enable/disable specific probe types
+  probes:
+    syscalls: true
+    scheduler: true
+    io: true
+    network: true
+  
+  # Syscalls to monitor specifically (empty = all)
+  monitored_syscalls: []
+  
+  # PIDs to exclude from monitoring
+  excluded_pids: []
+  
+  # Process names to exclude
+  excluded_processes:
+    - 'kthreadd'
+    - 'ksoftirqd'
+    - 'migration'
+    - 'rcu_'
+    - 'watchdog'
+
+# Slurm integration configuration
+slurm:
+  # Cache timeout for job information (seconds)
+  cache_timeout: 30
+  
+  # Slurm command timeout (seconds)
+  command_timeout: 10
+  
+  # Enable fallback mode when Slurm is not available
+  enable_fallback: true
+  
+  # Maximum number of fallback jobs to create
+  max_fallback_jobs: 50
+  
+  # Slurm accounting integration
+  accounting:
+    enabled: true
+    # Fields to retrieve from sacct
+    fields:
+      - 'JobID'
+      - 'JobName'
+      - 'User'
+      - 'Partition'
+      - 'State'
+      - 'ExitCode'
+      - 'Start'
+      - 'End'
+      - 'Elapsed'
+      - 'CPUTime'
+      - 'MaxRSS'
+      - 'MaxVMSize'
+
+# Job classification configuration
+classification:
+  # Thresholds for job classification (percentages)
+  thresholds:
+    cpu_bound: 70.0
+    io_bound: 30.0
+    idle_heavy: 50.0
+    context_switch: 1000
+  
+  # Efficiency scoring weights
+  efficiency_weights:
+    cpu_utilization: 0.4
+    io_efficiency: 0.3
+    wait_penalty: 0.5
+    context_switch_penalty: 0.2
+  
+  # Custom classification rules
+  custom_rules:
+    # Example: classify jobs with high network activity
+    network_intensive:
+      net_operations: 1000
+      classification: 'Network-bound'
+    
+    # Example: classify memory-intensive jobs
+    memory_intensive:
+      memory_threshold: 0.8
+      classification: 'Memory-bound'
+
+# Output configuration
+output:
+  # Default output format: 'json', 'csv', 'yaml'
+  default_format: 'json'
+  
+  # Include detailed syscall breakdown
+  include_syscall_breakdown: true
+  
+  # Include recommendations in output
+  include_recommendations: true
+  
+  # Timestamp format
+  timestamp_format: '%Y-%m-%d %H:%M:%S'
+  
+  # Precision for floating point numbers
+  float_precision: 2
+  
+  # Real-time dashboard configuration
+  dashboard:
+    refresh_rate: 2  # seconds
+    max_jobs_displayed: 20
+    show_graphs: false
+    color_scheme: 'default'  # 'default', 'dark', 'light'
+
+# Logging configuration
+logging:
+  # Log level: 'DEBUG', 'INFO', 'WARNING', 'ERROR'
+  level: 'INFO'
+  
+  # Log file path (empty = stdout only)
+  file: ''
+  
+  # Log format
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  
+  # Enable colored logs
+  colored: true
+  
+  # Log rotation
+  rotation:
+    enabled: false
+    max_size: '10MB'
+    backup_count: 5
+
+# Performance tuning
+performance:
+  # Maximum number of events to process per poll
+  max_events_per_poll: 1000
+  
+  # Memory limit for event storage (MB)
+  memory_limit_mb: 100
+  
+  # Enable event compression
+  compress_events: false
+  
+  # Sampling rate (1.0 = 100%, 0.1 = 10%)
+  sampling_rate: 1.0
+  
+  # CPU affinity for monitoring process
+  cpu_affinity: []
+
+# Integration with external systems
+integrations:
+  # Prometheus metrics export
+  prometheus:
+    enabled: false
+    port: 9090
+    metrics_prefix: 'hpc_monitor_'
+    update_interval: 30
+  
+  # InfluxDB integration
+  influxdb:
+    enabled: false
+    host: 'localhost'
+    port: 8086
+    database: 'hpc_monitoring'
+    username: ''
+    password: ''
+  
+  # Grafana dashboard
+  grafana:
+    enabled: false
+    dashboard_url: ''
+    api_key: ''
+  
+  # Email notifications
+  notifications:
+    enabled: false
+    smtp_server: ''
+    smtp_port: 587
+    username: ''
+    password: ''
+    recipients: []
+    
+    # Notification triggers
+    triggers:
+      low_efficiency:
+        threshold: 30.0
+        message: 'Job efficiency below threshold'
+      
+      high_context_switches:
+        threshold: 10000
+        message: 'High context switching detected'
+
+# Security settings
+security:
+  # Require specific capabilities
+  required_capabilities:
+    - 'CAP_BPF'
+    - 'CAP_SYS_ADMIN'
+  
+  # Allow monitoring of other users' processes
+  allow_cross_user: true
+  
+  # Restrict monitoring to specific users
+  allowed_users: []
+  
+  # Restrict monitoring to specific groups
+  allowed_groups: []
+
+# Experimental features
+experimental:
+  # Enable machine learning-based classification
+  ml_classification: false
+  
+  # Enable predictive analysis
+  predictive_analysis: false
+  
+  # Enable real-time anomaly detection
+  anomaly_detection: false
+  
+  # GPU monitoring (requires additional setup)
+  gpu_monitoring: false
