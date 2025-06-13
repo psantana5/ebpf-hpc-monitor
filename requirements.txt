@@ -1,5 +1,5 @@
 # Core eBPF and system monitoring
-bcc>=0.25.0
+bcc>=0.1.10
 psutil>=5.9.0
 
 # Data processing and analysis
