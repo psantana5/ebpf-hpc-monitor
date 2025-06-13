@@ -1,0 +1,237 @@
+# Docker ignore file for eBPF HPC Monitor
+# Excludes unnecessary files from Docker build context
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# Python cache and build files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+PYMANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+logs/
+*.tmp
+*.temp
+.cache/
+
+# Output and data files (exclude from image, use volumes)
+output/
+data/monitoring_sessions/
+data/sample_outputs/*.json
+data/test_data/*.json
+*.json
+*.csv
+*.yaml.bak
+
+# Test files and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Documentation build
+docs/_build/
+docs/.doctrees/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Local configuration overrides
+config/local_*.yaml
+config/dev_*.yaml
+config/*_override.yaml
+
+# Secrets and sensitive files
+*.key
+*.pem
+*.crt
+*.p12
+secrets/
+.env.local
+.env.production
+
+# Large binary files
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# Node.js (if any frontend components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Docker files (don't include other Docker files)
+Dockerfile.*
+docker-compose*.yml
+.dockerignore
+
+# CI/CD files
+.github/
+.gitlab-ci.yml
+.travis.yml
+Jenkinsfile
+
+# Local development scripts
+dev_scripts/
+local_test.sh
+run_local.sh
+
+# Performance profiling output
+*.prof
+*.profile
+
+# Core dumps
+core.*
+
+# Temporary monitoring data
+temp_monitoring/
+*.monitoring
+
+# Example output files
+examples/output/
+examples/*.json
+examples/*.csv
+
+# README images and assets (keep only essential ones)
+*.png
+*.jpg
+*.gif
+*.svg
+assets/
+images/
+
+# Keep only essential documentation in the image
+# Exclude detailed docs that can be accessed via repository
+# docs/detailed/
+# docs/advanced/
+
+# Exclude test data that's not needed in production
+tests/test_data/large_datasets/
+tests/fixtures/
+
+# Exclude development tools configuration
+.pre-commit-config.yaml
+.flake8
+.pylintrc
+pyproject.toml
+setup.cfg
+
+# Exclude package management files that aren't needed
+Poetry.lock
+Pipfile
+conda-environment.yml
+
+# Exclude any local override files
+local_*
+override_*
+custom_*
+
+# Exclude any compiled eBPF objects (will be compiled in container)
+*.o
+*.ll
+*.bc
+
+# Exclude any local Slurm configuration
+slurm_local.conf
+slurm_override.conf
+
+# Exclude monitoring session archives
+archive/
+backups/
+
+# Exclude any local certificates or keys
+certs/
+keys/
+ssl/
