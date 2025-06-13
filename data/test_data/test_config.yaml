@@ -1,0 +1,198 @@
+# Test Configuration for eBPF HPC Monitor
+# This configuration is used for testing and development
+
+# eBPF Probe Configuration
+ebpf:
+  enabled: true
+  # Test with reduced buffer sizes for faster testing
+  buffer_size: 64  # KB (reduced from production 256KB)
+  poll_timeout: 100  # ms
+  
+  # Enable specific probe types for testing
+  probes:
+    syscalls: true
+    scheduling: true
+    io_events: true
+    network: true
+  
+  # Test-specific syscalls to monitor
+  monitored_syscalls:
+    - read
+    - write
+    - open
+    - close
+    - execve
+    - clone
+    - futex
+    - nanosleep
+  
+  # Reduced thresholds for testing
+  thresholds:
+    max_events_per_second: 1000  # Reduced for testing
+    max_pids: 50  # Limit for testing
+
+# Slurm Integration (Test Mode)
+slurm:
+  enabled: true
+  fallback_mode: true  # Use fallback when Slurm not available
+  
+  # Test commands (can be mocked)
+  commands:
+    squeue: "squeue"
+    sacct: "sacct"
+    sstat: "sstat"
+  
+  # Reduced cache times for testing
+  cache:
+    job_info_ttl: 30  # seconds
+    pid_cache_ttl: 10  # seconds
+  
+  # Test accounting fields
+  accounting_fields:
+    - JobID
+    - User
+    - JobName
+    - Partition
+    - State
+    - CPUTime
+    - MaxRSS
+    - AveCPU
+
+# Job Classification (Test Thresholds)
+classification:
+  thresholds:
+    cpu_bound_threshold: 60  # % (reduced for testing)
+    io_bound_threshold: 30   # % (reduced for testing)
+    idle_threshold: 50       # % (reduced for testing)
+  
+  weights:
+    cpu_weight: 0.4
+    io_weight: 0.3
+    context_switch_weight: 0.2
+    syscall_weight: 0.1
+
+# Output Configuration (Test Mode)
+output:
+  format: "json"  # json, csv, yaml
+  
+  # Test output settings
+  real_time_display: true
+  save_raw_events: false  # Disable for testing to save space
+  
+  # Reduced detail for faster testing
+  include_details:
+    syscall_breakdown: true
+    performance_analysis: true
+    recommendations: true
+    raw_metrics: false  # Disable for testing
+
+# Logging (Test Configuration)
+logging:
+  level: "DEBUG"  # More verbose for testing
+  format: "detailed"
+  
+  # Test log files
+  files:
+    main_log: "/tmp/hpc_monitor_test.log"
+    error_log: "/tmp/hpc_monitor_test_errors.log"
+    ebpf_log: "/tmp/hpc_monitor_test_ebpf.log"
+  
+  # Reduced log rotation for testing
+  rotation:
+    max_size_mb: 10  # Small for testing
+    backup_count: 2
+
+# Performance (Test Settings)
+performance:
+  # Faster updates for testing
+  update_interval: 1.0  # seconds
+  batch_size: 100       # events
+  
+  # Reduced limits for testing
+  limits:
+    max_memory_mb: 100
+    max_cpu_percent: 50
+    max_events_buffer: 1000
+
+# External Systems (Disabled for Testing)
+external_systems:
+  prometheus:
+    enabled: false  # Disable for testing
+  
+  influxdb:
+    enabled: false  # Disable for testing
+  
+  grafana:
+    enabled: false  # Disable for testing
+  
+  email_notifications:
+    enabled: false  # Disable for testing
+
+# Security (Test Mode)
+security:
+  required_capabilities:
+    - CAP_SYS_ADMIN  # Required for eBPF
+    - CAP_SYS_PTRACE # Required for process monitoring
+  
+  # Relaxed restrictions for testing
+  allowed_users:
+    - root
+    - testuser
+  
+  allowed_groups:
+    - root
+    - wheel
+    - testgroup
+
+# Experimental Features (Enable for Testing)
+experimental:
+  ml_classification:
+    enabled: false  # Disable ML for basic testing
+  
+  predictive_analysis:
+    enabled: false  # Disable for basic testing
+  
+  anomaly_detection:
+    enabled: false  # Disable for basic testing
+  
+  gpu_monitoring:
+    enabled: false  # Disable GPU monitoring for basic testing
+
+# Test-Specific Settings
+test_settings:
+  # Mock data generation
+  mock_data:
+    enabled: true
+    job_count: 5
+    duration_range: [60, 300]  # seconds
+    cpu_range: [10, 90]        # percent
+    io_range: [5, 60]          # percent
+  
+  # Simulation settings
+  simulation:
+    enabled: false
+    scenario: "mixed_workload"  # cpu_intensive, io_intensive, mixed_workload
+  
+  # Validation settings
+  validation:
+    strict_mode: true
+    check_privileges: true
+    verify_slurm: false  # Don't require Slurm for testing
+    verify_ebpf: true
+
+# Development Settings
+development:
+  debug_mode: true
+  verbose_output: true
+  
+  # Development paths
+  paths:
+    test_data_dir: "./data/test_data"
+    sample_output_dir: "./data/sample_outputs"
+    temp_dir: "/tmp/hpc_monitor_test"
+  
+  # Development features
+  features:
+    auto_reload: false
+    profile_performance: true
+    memory_tracking: true
