@@ -39,6 +39,7 @@ RUN apt-get update && apt-get install -y \
     psmisc \
     lsof \
     strace \
+    libcap2-bin \
     # Cleanup
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

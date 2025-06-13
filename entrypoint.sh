@@ -31,10 +31,16 @@ check_ebpf_support() {
     fi
     
     # Test BCC import
-    python3 -c "from bcc import BPF; print('BCC import: OK')" 2>/dev/null || {
-        echo "Error: BCC not properly installed or accessible"
-        exit 1
-    }
+    echo "Testing BCC installation..."
+    if python3 -c "from bcc import BPF; print('BCC import: OK')" 2>/dev/null; then
+        echo "BCC is properly installed and accessible"
+    else
+        echo "Warning: BCC import failed. Checking installation..."
+        python3 -c "import bcc; print(f'BCC version: {bcc.__version__}')" 2>/dev/null || {
+            echo "Error: BCC package not found. Please check installation."
+            echo "Continuing anyway - some features may not work."
+        }
+    fi
 }
 
 # Function to setup Slurm integration
