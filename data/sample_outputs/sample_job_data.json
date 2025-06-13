@@ -1,0 +1,263 @@
+{
+  "monitoring_session": {
+    "start_time": "2024-01-15T10:30:00Z",
+    "end_time": "2024-01-15T10:35:00Z",
+    "duration_seconds": 300,
+    "monitor_version": "1.0.0",
+    "config": {
+      "ebpf_enabled": true,
+      "slurm_integration": true,
+      "real_time_display": false
+    }
+  },
+  "system_info": {
+    "hostname": "hpc-node-01",
+    "kernel_version": "5.15.0-56-generic",
+    "cpu_cores": 32,
+    "memory_gb": 128,
+    "slurm_version": "22.05.3"
+  },
+  "jobs": [
+    {
+      "job_id": "12345",
+      "user": "researcher1",
+      "job_name": "molecular_dynamics_sim",
+      "partition": "compute",
+      "nodes": ["hpc-node-01"],
+      "cpus": 16,
+      "start_time": "2024-01-15T10:25:00Z",
+      "duration_seconds": 300,
+      "pids": [15432, 15433, 15434, 15435],
+      "metrics": {
+        "cpu_percent": 87.3,
+        "io_percent": 8.2,
+        "wait_percent": 4.5,
+        "context_switches": 2847,
+        "total_syscalls": 45623,
+        "io_syscalls": 1247,
+        "net_syscalls": 89,
+        "cpu_time_ns": 261900000000,
+        "wait_time_ns": 13500000000,
+        "total_io_bytes": 2147483648,
+        "read_bytes": 1073741824,
+        "write_bytes": 1073741824,
+        "total_net_bytes": 5242880,
+        "send_bytes": 2621440,
+        "recv_bytes": 2621440,
+        "io_operations": 8192,
+        "net_operations": 156,
+        "avg_syscall_duration": 5743,
+        "max_syscall_duration": 125000,
+        "min_syscall_duration": 1200
+      },
+      "classification": {
+        "type": "CPU-bound",
+        "confidence": 0.92,
+        "efficiency_score": 83.1,
+        "recommendations": [
+          "Job is well-optimized for CPU usage",
+          "Consider using more CPU cores if available",
+          "I/O usage is minimal and efficient"
+        ]
+      },
+      "syscall_breakdown": {
+        "read": 623,
+        "write": 624,
+        "open": 45,
+        "close": 45,
+        "mmap": 12,
+        "munmap": 8,
+        "brk": 156,
+        "futex": 2847,
+        "clone": 4,
+        "execve": 1,
+        "other": 41258
+      },
+      "performance_analysis": {
+        "cpu_efficiency": 87.3,
+        "io_efficiency": 76.4,
+        "memory_efficiency": 82.1,
+        "overall_efficiency": 83.1,
+        "bottlenecks": [],
+        "optimization_suggestions": [
+          "Excellent CPU utilization",
+          "Consider parallel I/O if dataset grows"
+        ]
+      }
+    },
+    {
+      "job_id": "12346",
+      "user": "researcher2",
+      "job_name": "data_processing_pipeline",
+      "partition": "compute",
+      "nodes": ["hpc-node-01"],
+      "cpus": 8,
+      "start_time": "2024-01-15T10:28:00Z",
+      "duration_seconds": 300,
+      "pids": [15500, 15501],
+      "metrics": {
+        "cpu_percent": 34.7,
+        "io_percent": 52.1,
+        "wait_percent": 13.2,
+        "context_switches": 8934,
+        "total_syscalls": 78456,
+        "io_syscalls": 12847,
+        "net_syscalls": 234,
+        "cpu_time_ns": 104100000000,
+        "wait_time_ns": 39600000000,
+        "total_io_bytes": 8589934592,
+        "read_bytes": 6442450944,
+        "write_bytes": 2147483648,
+        "total_net_bytes": 1048576,
+        "send_bytes": 524288,
+        "recv_bytes": 524288,
+        "io_operations": 32768,
+        "net_operations": 48,
+        "avg_syscall_duration": 8234,
+        "max_syscall_duration": 250000,
+        "min_syscall_duration": 800
+      },
+      "classification": {
+        "type": "I/O-bound",
+        "confidence": 0.89,
+        "efficiency_score": 65.4,
+        "recommendations": [
+          "High I/O activity detected",
+          "Consider using faster storage (SSD)",
+          "Implement I/O buffering strategies",
+          "Reduce CPU allocation to match actual usage"
+        ]
+      },
+      "syscall_breakdown": {
+        "read": 6423,
+        "write": 6424,
+        "open": 234,
+        "close": 234,
+        "lseek": 1024,
+        "stat": 156,
+        "fstat": 234,
+        "mmap": 45,
+        "munmap": 32,
+        "brk": 89,
+        "futex": 8934,
+        "other": 54661
+      },
+      "performance_analysis": {
+        "cpu_efficiency": 34.7,
+        "io_efficiency": 68.9,
+        "memory_efficiency": 71.2,
+        "overall_efficiency": 65.4,
+        "bottlenecks": [
+          {
+            "type": "I/O",
+            "severity": "Medium",
+            "description": "High I/O wait times"
+          }
+        ],
+        "optimization_suggestions": [
+          "Use parallel I/O libraries",
+          "Implement read-ahead buffering",
+          "Consider data compression"
+        ]
+      }
+    },
+    {
+      "job_id": "12347",
+      "user": "researcher1",
+      "job_name": "idle_test_job",
+      "partition": "debug",
+      "nodes": ["hpc-node-01"],
+      "cpus": 4,
+      "start_time": "2024-01-15T10:32:00Z",
+      "duration_seconds": 300,
+      "pids": [15600],
+      "metrics": {
+        "cpu_percent": 12.4,
+        "io_percent": 3.1,
+        "wait_percent": 84.5,
+        "context_switches": 456,
+        "total_syscalls": 2847,
+        "io_syscalls": 23,
+        "net_syscalls": 5,
+        "cpu_time_ns": 37200000000,
+        "wait_time_ns": 253500000000,
+        "total_io_bytes": 65536,
+        "read_bytes": 32768,
+        "write_bytes": 32768,
+        "total_net_bytes": 1024,
+        "send_bytes": 512,
+        "recv_bytes": 512,
+        "io_operations": 16,
+        "net_operations": 2,
+        "avg_syscall_duration": 3456,
+        "max_syscall_duration": 45000,
+        "min_syscall_duration": 1000
+      },
+      "classification": {
+        "type": "Idle-heavy",
+        "confidence": 0.96,
+        "efficiency_score": 18.7,
+        "recommendations": [
+          "Job is mostly idle - investigate cause",
+          "Consider reducing resource allocation",
+          "Check for blocking operations or sleeps",
+          "May be waiting for external resources"
+        ]
+      },
+      "syscall_breakdown": {
+        "read": 12,
+        "write": 11,
+        "open": 3,
+        "close": 3,
+        "nanosleep": 234,
+        "futex": 456,
+        "brk": 8,
+        "mmap": 2,
+        "other": 2118
+      },
+      "performance_analysis": {
+        "cpu_efficiency": 12.4,
+        "io_efficiency": 15.6,
+        "memory_efficiency": 25.3,
+        "overall_efficiency": 18.7,
+        "bottlenecks": [
+          {
+            "type": "Idle/Wait",
+            "severity": "High",
+            "description": "Job spends most time waiting"
+          }
+        ],
+        "optimization_suggestions": [
+          "Investigate cause of idle time",
+          "Reduce resource allocation",
+          "Consider job redesign"
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "total_jobs_monitored": 3,
+    "monitoring_duration_seconds": 300,
+    "average_efficiency": 55.7,
+    "job_classifications": {
+      "CPU-bound": 1,
+      "I/O-bound": 1,
+      "Idle-heavy": 1,
+      "Balanced": 0
+    },
+    "system_utilization": {
+      "total_cpu_percent": 44.8,
+      "total_io_percent": 21.1,
+      "total_context_switches": 12237,
+      "total_syscalls": 126926,
+      "total_io_bytes": 10737418240,
+      "total_net_bytes": 6291456
+    },
+    "recommendations": [
+      "Job 12345 shows excellent CPU utilization",
+      "Job 12346 would benefit from I/O optimization",
+      "Job 12347 requires investigation for idle time",
+      "Overall system utilization could be improved"
+    ]
+  }
+}
