@@ -34,10 +34,6 @@ RUN apt-get update && apt-get install -y \
     # Kernel and eBPF dependencies
     linux-headers-generic \
     libbpf-dev \
-    # BCC dependencies
-    libbcc-dev \
-    python3-bcc \
-    bcc-tools \
     # Additional utilities
     procps \
     psmisc \
@@ -46,6 +42,9 @@ RUN apt-get update && apt-get install -y \
     # Cleanup
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Install BCC from pip (more reliable than apt packages)
+RUN pip3 install bcc
 
 # Create application directory
 WORKDIR /app
@@ -72,107 +71,12 @@ RUN mkdir -p /app/logs /app/output /app/data/monitoring_sessions
 # Set proper permissions
 RUN chown -R monitor:monitor /app
 
-# Create entrypoint script
-RUN cat > /app/entrypoint.sh << 'EOF'
-#!/bin/bash
-set -e
+# Copy entrypoint and healthcheck scripts
+COPY entrypoint.sh /app/entrypoint.sh
+COPY healthcheck.sh /app/healthcheck.sh
 
-# Function to check if running with required privileges
-check_privileges() {
-    if [ "$(id -u)" != "0" ]; then
-        echo "Warning: Not running as root. eBPF functionality may be limited."
-        echo "Run with: docker run --privileged ..."
-    fi
-    
-    # Check for required capabilities
-    if ! capsh --print | grep -q "cap_sys_admin"; then
-        echo "Warning: CAP_SYS_ADMIN capability not available"
-    fi
-}
-
-# Function to check eBPF support
-check_ebpf_support() {
-    echo "Checking eBPF support..."
-    
-    # Check if /sys/kernel/debug is mounted
-    if [ ! -d "/sys/kernel/debug/tracing" ]; then
-        echo "Warning: /sys/kernel/debug/tracing not available"
-        echo "Mount with: -v /sys/kernel/debug:/sys/kernel/debug:rw"
-    fi
-    
-    # Check if kernel modules are available
-    if [ ! -d "/lib/modules/$(uname -r)" ]; then
-        echo "Warning: Kernel modules not available"
-        echo "Mount with: -v /lib/modules:/lib/modules:ro"
-    fi
-    
-    # Test BCC import
-    python3 -c "from bcc import BPF; print('BCC import: OK')" 2>/dev/null || {
-        echo "Error: BCC not properly installed or accessible"
-        exit 1
-    }
-}
-
-# Function to setup Slurm integration
-setup_slurm() {
-    # Check if Slurm commands are available in the host
-    if command -v squeue >/dev/null 2>&1; then
-        echo "Slurm commands detected"
-    else
-        echo "Slurm not detected - will use fallback mode"
-    fi
-}
-
-# Main execution
-echo "=== eBPF HPC Monitor Container ==="
-echo "Starting container initialization..."
-
-check_privileges
-check_ebpf_support
-setup_slurm
-
-echo "Container ready!"
-echo ""
-echo "Usage examples:"
-echo "  # Monitor user processes:"
-echo "  python3 scripts/hpc_monitor.py --user username --duration 60"
-echo ""
-echo "  # Monitor specific job:"
-echo "  python3 scripts/hpc_monitor.py --job-id 12345 --duration 300"
-echo ""
-echo "  # Run interactive dashboard:"
-echo "  python3 examples/realtime_dashboard.py --user username"
-echo ""
-
-# Execute the command passed to docker run, or start interactive shell
-if [ "$#" -eq 0 ]; then
-    echo "Starting interactive shell..."
-    exec /bin/bash
-else
-    echo "Executing: $@"
-    exec "$@"
-fi
-EOF
-
-# Make entrypoint executable
-RUN chmod +x /app/entrypoint.sh
-
-# Create a simple health check script
-RUN cat > /app/healthcheck.sh << 'EOF'
-#!/bin/bash
-# Simple health check for the container
-
-# Check if Python can import required modules
-python3 -c "import sys; sys.path.insert(0, '/app/scripts'); from ebpf_probes import EBPFProbeManager" 2>/dev/null || exit 1
-
-# Check if BCC is working
-python3 -c "from bcc import BPF" 2>/dev/null || exit 1
-
-echo "Health check passed"
-exit 0
-EOF
-
-RUN chmod +x /app/healthcheck.sh
+# Make scripts executable
+RUN chmod +x /app/entrypoint.sh /app/healthcheck.sh
 
 # Set up health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
@@ -217,37 +121,8 @@ RUN echo 'alias ll="ls -la"' >> /root/.bashrc && \
     echo 'export PATH="/app/scripts:$PATH"' >> /root/.bashrc
 
 # Add completion and helpful functions
-RUN cat >> /root/.bashrc << 'EOF'
+COPY bashrc_functions.sh /tmp/bashrc_functions.sh
+RUN cat /tmp/bashrc_functions.sh >> /root/.bashrc && rm /tmp/bashrc_functions.sh
 
-# eBPF HPC Monitor helper functions
-monitor_user() {
-    if [ -z "$1" ]; then
-        echo "Usage: monitor_user <username> [duration]"
-        return 1
-    fi
-    local duration=${2:-60}
-    python3 /app/scripts/hpc_monitor.py --user "$1" --duration "$duration"
-}
-
-monitor_job() {
-    if [ -z "$1" ]; then
-        echo "Usage: monitor_job <job_id> [duration]"
-        return 1
-    fi
-    local duration=${2:-300}
-    python3 /app/scripts/hpc_monitor.py --job-id "$1" --duration "$duration"
-}
-
-show_examples() {
-    echo "Available monitoring examples:"
-    echo "  monitor_user <username> [duration]  - Monitor user processes"
-    echo "  monitor_job <job_id> [duration]     - Monitor specific job"
-    echo "  python3 examples/basic_monitoring.py - Run basic examples"
-    echo "  python3 examples/realtime_dashboard.py --user <username> - Interactive dashboard"
-    echo "  python3 examples/job_profiling.py --job-id <id> - Detailed job profiling"
-}
-
-EOF
-
-echo "Docker image build complete!"
-echo "Run with: docker run --privileged --pid=host --net=host -v /sys/kernel/debug:/sys/kernel/debug:rw -v /lib/modules:/lib/modules:ro ebpf-hpc-monitor"
+RUN echo "Docker image build complete!" && \
+    echo "Run with: docker run --privileged --pid=host --net=host -v /sys/kernel/debug:/sys/kernel/debug:rw -v /lib/modules:/lib/modules:ro ebpf-hpc-monitor"
